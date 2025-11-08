@@ -238,6 +238,78 @@ const App: React.FC = () => {
     setInvestmentToEdit(null);
   };
 
+  const handleExport = () => {
+    const dataToExport = {
+        version: 1,
+        earnings,
+        investments,
+        currency,
+        earningSources,
+    };
+    const dataStr = JSON.stringify(dataToExport, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const date = new Date().toISOString().split('T')[0];
+    link.download = `savvy_savings_backup_${date}.json`;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImport = () => {
+    if (!window.confirm('Importing data will overwrite all existing data. Are you sure you want to continue?')) {
+        return;
+    }
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const text = event.target?.result;
+                if (typeof text !== 'string') throw new Error('File could not be read.');
+                
+                const importedData = JSON.parse(text);
+
+                if (
+                    !importedData ||
+                    !Array.isArray(importedData.earnings) ||
+                    !Array.isArray(importedData.investments) ||
+                    typeof importedData.currency !== 'string' ||
+                    !Array.isArray(importedData.earningSources)
+                ) {
+                    throw new Error('Invalid backup file format.');
+                }
+
+                setEarnings(importedData.earnings);
+                setInvestments(importedData.investments);
+                setCurrency(importedData.currency);
+                setEarningSources(importedData.earningSources);
+
+                alert('Data imported successfully!');
+                setActiveScreen('dashboard');
+
+            } catch (error) {
+                console.error('Failed to import data:', error);
+                alert(`Failed to import data. Please check the file format. Error: ${(error as Error).message}`);
+            }
+        };
+        reader.onerror = () => {
+            alert('Error reading file.');
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+  };
+
   const renderScreen = () => {
     switch(activeScreen) {
       case 'dashboard':
@@ -314,7 +386,7 @@ const App: React.FC = () => {
                     }}
                 />;
       case 'settings':
-        return <SettingsScreen setActiveScreen={setActiveScreen} />;
+        return <SettingsScreen setActiveScreen={setActiveScreen} onExport={handleExport} onImport={handleImport} />;
       case 'currencySettings':
         return <CurrencySettingsScreen
             currency={currency}

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Screen } from '../types';
-import { ChevronRightIcon, CurrencyDollarIcon, ClipboardDocumentListIcon } from './Icons';
+import { ChevronRightIcon, CurrencyDollarIcon, ClipboardDocumentListIcon, ArrowDownTrayIcon, ArrowUpTrayIcon } from './Icons';
 
 interface SettingsScreenProps {
   setActiveScreen: (screen: Screen) => void;
+  onExport: () => void;
+  onImport: () => void;
 }
 
 interface SettingsTileProps {
@@ -30,7 +32,7 @@ const SettingsTile: React.FC<SettingsTileProps> = ({ title, description, icon, o
 );
 
 
-export const SettingsScreen: React.FC<SettingsScreenProps> = ({ setActiveScreen }) => {
+export const SettingsScreen: React.FC<SettingsScreenProps> = ({ setActiveScreen, onExport, onImport }) => {
   return (
     <div className="p-4 md:p-6">
       <h1 className="text-2xl font-bold text-gray-100 mb-8">Settings</h1>
@@ -48,6 +50,21 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ setActiveScreen 
             icon={<ClipboardDocumentListIcon className="w-6 h-6 text-indigo-400" />}
             onClick={() => setActiveScreen('earningSourcesSettings')}
         />
+
+        <div className="pt-4 mt-4 border-t border-white/10 space-y-4">
+             <SettingsTile
+                title="Export Data"
+                description="Save all your data to a backup file"
+                icon={<ArrowDownTrayIcon className="w-6 h-6 text-indigo-400" />}
+                onClick={onExport}
+            />
+            <SettingsTile
+                title="Import Data"
+                description="Restore your data from a backup file"
+                icon={<ArrowUpTrayIcon className="w-6 h-6 text-indigo-400" />}
+                onClick={onImport}
+            />
+        </div>
       </div>
     </div>
   );
