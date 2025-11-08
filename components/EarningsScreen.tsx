@@ -19,7 +19,7 @@ export const EarningsScreen: React.FC<EarningsScreenProps> = ({ earnings, delete
     }
 
     return (
-        <div className="p-4 md:p-6 min-h-screen">
+        <div className="p-4 md:p-6">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-100">Your Earnings</h1>
                 <button

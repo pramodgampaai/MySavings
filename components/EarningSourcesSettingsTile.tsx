@@ -34,7 +34,7 @@ export const EarningSourcesSettingsScreen: React.FC<EarningSourcesSettingsScreen
   }
 
   return (
-    <div className="p-4 md:p-6 min-h-screen">
+    <div className="p-4 md:p-6">
         <div className="flex items-center mb-8">
             <button onClick={onBack} className="p-2 mr-2 -ml-2 text-gray-400 hover:text-white transition-colors">
                 <ChevronLeftIcon className="w-6 h-6" />

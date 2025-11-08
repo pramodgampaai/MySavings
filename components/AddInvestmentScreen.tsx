@@ -55,7 +55,7 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
   };
 
   return (
-    <div className="p-4 md:p-6 min-h-screen">
+    <div className="p-4 md:p-6">
       <h1 className="text-3xl font-bold text-gray-100 mb-8">{investmentToEdit ? 'Edit Investment' : 'Add New Investment'}</h1>
       <form onSubmit={handleSubmit} className="bg-gray-900 border border-white/10 p-6 rounded-xl shadow-2xl space-y-6">
         <div>
