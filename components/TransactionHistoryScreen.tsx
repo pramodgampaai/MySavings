@@ -49,7 +49,7 @@ export const TransactionHistoryScreen: React.FC<TransactionHistoryScreenProps> =
             <ChevronLeftIcon className="w-6 h-6" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-100">Transaction History</h1>
+          <h1 className="text-2xl font-bold text-gray-100">Transaction History</h1>
           <p className="text-gray-400">{investment.name}</p>
         </div>
       </div>

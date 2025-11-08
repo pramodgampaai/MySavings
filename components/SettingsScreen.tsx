@@ -33,7 +33,7 @@ const SettingsTile: React.FC<SettingsTileProps> = ({ title, description, icon, o
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({ setActiveScreen }) => {
   return (
     <div className="p-4 md:p-6">
-      <h1 className="text-3xl font-bold text-gray-100 mb-8">Settings</h1>
+      <h1 className="text-2xl font-bold text-gray-100 mb-8">Settings</h1>
       
       <div className="space-y-4">
         <SettingsTile

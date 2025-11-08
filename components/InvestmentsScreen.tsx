@@ -154,7 +154,7 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
     return (
         <div className="p-4 md:p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold text-gray-100">Your Investments</h1>
+                <h1 className="text-2xl font-bold text-gray-100">Your Investments</h1>
                 <button
                     onClick={onAddInvestment}
                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-lg shadow-lg transition-all transform hover:scale-105"

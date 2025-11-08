@@ -51,7 +51,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
 
   return (
     <div className="p-4 md:p-6">
-      <h1 className="text-3xl font-bold text-gray-100 mb-8">{earningToEdit ? 'Edit Earning' : 'Add New Earning'}</h1>
+      <h1 className="text-2xl font-bold text-gray-100 mb-8">{earningToEdit ? 'Edit Earning' : 'Add New Earning'}</h1>
       <form onSubmit={handleSubmit} className="bg-gray-900 border border-white/10 p-6 rounded-xl shadow-2xl space-y-6">
         <div>
           <label htmlFor="source" className="block text-sm font-medium text-gray-400 mb-1">Earning Source</label>

@@ -15,7 +15,7 @@ export const CurrencySettingsScreen: React.FC<CurrencySettingsScreenProps> = ({ 
         <button onClick={onBack} className="p-2 mr-2 -ml-2 text-gray-400 hover:text-white transition-colors">
             <ChevronLeftIcon className="w-6 h-6" />
         </button>
-        <h1 className="text-3xl font-bold text-gray-100">Currency Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-100">Currency Settings</h1>
       </div>
       <div className="bg-gray-900 border border-white/10 p-6 rounded-xl shadow-2xl space-y-6">
         <div>
