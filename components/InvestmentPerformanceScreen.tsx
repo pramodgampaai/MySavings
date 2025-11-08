@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Investment } from '../types';
+// Fix: Import InvestmentHistoryPoint to use as a type.
+import { Investment, InvestmentHistoryPoint } from '../types';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line } from 'recharts';
 import { NoDataIcon, ChevronLeftIcon } from './Icons';
 import { formatCurrency } from '../utils/currency';
@@ -52,26 +53,61 @@ interface InvestmentPerformanceScreenProps {
 }
 
 export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenProps> = ({ investments, currency, onBack }) => {
-  const [selectedInvestmentId, setSelectedInvestmentId] = useState<string | null>(null);
+  const [selectedInvestmentId, setSelectedInvestmentId] = useState<string>('');
 
-  const selectedInvestment = useMemo(() => {
-    if (!selectedInvestmentId) return null;
-    return investments.find(inv => inv.id === selectedInvestmentId) ?? null;
-  }, [investments, selectedInvestmentId]);
-  
   const chartData = useMemo(() => {
-    if (!selectedInvestment) return [];
+    if (!selectedInvestmentId) {
+        return null;
+    }
+
+    if (selectedInvestmentId === '__all__') {
+        if (investments.length === 0) return [];
+
+        const allHistoryPoints = investments.flatMap(inv => inv.history);
+        if (allHistoryPoints.length === 0) return [];
+        
+        const uniqueDates = [...new Set(allHistoryPoints.map(p => p.date))]
+            // Fix: Explicitly type sort arguments to prevent them from being inferred as `unknown`.
+            .sort((a: string, b: string) => new Date(a).getTime() - new Date(b).getTime());
+
+        const aggregatedData = uniqueDates.map((date: string) => {
+            let totalMarketValue = 0;
+            let totalBookValue = 0;
+
+            investments.forEach(inv => {
+                const relevantHistory = inv.history
+                    // Fix: Explicitly type `date` in the parent `map` to ensure correct type here.
+                    .filter(p => new Date(p.date).getTime() <= new Date(date).getTime())
+                    // Fix: Explicitly type sort arguments.
+                    .sort((a: InvestmentHistoryPoint, b: InvestmentHistoryPoint) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+                if (relevantHistory.length > 0) {
+                    totalMarketValue += relevantHistory[relevantHistory.length - 1].value;
+                    totalBookValue += relevantHistory.reduce((sum, p) => sum + p.contribution, 0);
+                }
+            });
+
+            return {
+                date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                marketValue: totalMarketValue,
+                bookValue: totalBookValue,
+            };
+        });
+        return aggregatedData;
+    } 
     
-    const sortedHistory = [...selectedInvestment.history].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    // Logic for a single investment
+    const investment = investments.find(inv => inv.id === selectedInvestmentId);
+    if (!investment) return [];
+    
+    // Fix: Explicitly type sort arguments.
+    const sortedHistory = [...investment.history].sort((a: InvestmentHistoryPoint, b: InvestmentHistoryPoint) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     let cumulativeContribution = 0;
+    let lastKnownMarketValue = 0;
     return sortedHistory.map(point => {
         cumulativeContribution += point.contribution;
-        
-        const isUserProvidedValue = 
-            point.note === "Initial Investment" ||
-            point.note === "Value Update" ||
-            point.note === "Value Update & Funds Added";
+        lastKnownMarketValue = point.value;
         
         let eventType = null;
         if (point.note === "Funds Added" || (point.note === "Value Update & Funds Added" && point.contribution > 0)) eventType = 'contribution';
@@ -80,14 +116,14 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
 
         return {
             date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            marketValue: isUserProvidedValue ? point.value : undefined,
+            marketValue: lastKnownMarketValue,
             bookValue: cumulativeContribution,
             note: point.note,
             type: eventType,
         };
     });
 
-  }, [selectedInvestment]);
+  }, [investments, selectedInvestmentId]);
 
   return (
     <div className="p-4 md:p-6 space-y-6">
@@ -101,18 +137,23 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
         <div className="bg-gray-900 border border-white/10 p-4 md:p-6 rounded-xl shadow-2xl">
             {investments.length > 0 ? (
             <>
-                <label htmlFor="investment-select" className="block text-sm font-medium text-gray-400 mb-2">Select an investment to view its performance:</label>
+                <label htmlFor="investment-select" className="block text-sm font-medium text-gray-400 mb-2">Select a view:</label>
                 <select 
                     id="investment-select"
-                    value={selectedInvestmentId ?? ''} 
-                    onChange={e => setSelectedInvestmentId(e.target.value || null)}
+                    value={selectedInvestmentId} 
+                    onChange={e => setSelectedInvestmentId(e.target.value)}
                     className="mb-4 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-indigo-500 focus:border-indigo-500 text-base truncate"
                 >
-                    <option value="">Select an Investment</option>
+                    <option value="" disabled>-- Select a View --</option>
+                    <option value="__all__">All Investments</option>
                     {investments.map(inv => <option className="bg-gray-800 text-white" key={inv.id} value={inv.id}>{inv.name}</option>)}
                 </select>
                 
-                {selectedInvestment ? (
+                {!selectedInvestmentId ? (
+                     <div className="text-center text-gray-500 py-8 h-[300px] flex flex-col items-center justify-center">
+                        <p>Please select a view to display the performance chart.</p>
+                    </div>
+                ) : chartData && chartData.length > 0 ? (
                     <div style={{ width: '100%', height: 300 }}>
                         <ResponsiveContainer>
                             <AreaChart data={chartData} margin={{ top: 30, right: 30, left: 20, bottom: 10 }}>
@@ -140,33 +181,32 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
                                 <Tooltip content={<CustomTooltip currency={currency} />} />
                                 <Legend wrapperStyle={{ color: '#9ca3af' }} />
                                 <Area 
-                                connectNulls={false} 
-                                type="monotone" 
-                                dataKey="marketValue" 
-                                name="Market Value" 
-                                stroke="#818cf8" 
-                                strokeWidth={2} 
-                                fillOpacity={1} 
-                                fill="url(#colorValue)" 
-                                dot={<EventDot />}
-                                activeDot={{ r: 8, stroke: '#a78bfa', strokeWidth: 2 }}
+                                    type="monotone" 
+                                    dataKey="marketValue" 
+                                    name="Market Value" 
+                                    stroke="#818cf8" 
+                                    strokeWidth={2} 
+                                    fillOpacity={1} 
+                                    fill="url(#colorValue)" 
+                                    dot={selectedInvestmentId !== '__all__' ? <EventDot /> : false}
+                                    activeDot={selectedInvestmentId !== '__all__' ? { r: 8, stroke: '#a78bfa', strokeWidth: 2 } : false}
                                 />
                                 <Line
-                                type="monotone"
-                                dataKey="bookValue"
-                                name="Book Value"
-                                stroke="#34d399"
-                                strokeWidth={2}
-                                strokeDasharray="5 5"
-                                dot={false}
-                                activeDot={false}
+                                    type="monotone"
+                                    dataKey="bookValue"
+                                    name="Book Value"
+                                    stroke="#34d399"
+                                    strokeWidth={2}
+                                    strokeDasharray="5 5"
+                                    dot={false}
+                                    activeDot={false}
                                 />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
                 ) : (
-                    <div className="text-center text-gray-500 py-8 flex flex-col items-center">
-                        <p>Please select an investment from the dropdown to see its chart.</p>
+                    <div className="text-center text-gray-500 py-8 h-[300px] flex flex-col items-center justify-center">
+                        <p>{selectedInvestmentId === '__all__' ? 'No data available to display portfolio performance.' : 'This investment has no history to display.'}</p>
                     </div>
                 )}
             </>
