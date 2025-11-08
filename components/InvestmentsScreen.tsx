@@ -187,9 +187,6 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                 <p className="text-2xl font-bold text-blue-400 mt-2">{formatCurrency(getLatestValue(inv), currency)}</p>
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0">
-                                <button onClick={() => onViewHistory(inv)} className="p-2 text-gray-400 hover:text-blue-400 transition-colors" title="View Transaction History">
-                                    <ClockIcon className="w-5 h-5" />
-                                </button>
                                 <button onClick={() => handleLogMarketValueClick(inv.id)} className="p-2 text-gray-400 hover:text-indigo-400 transition-colors" title="Log Market Value">
                                     <ArrowTrendingUpIcon className="w-6 h-6" />
                                 </button>
@@ -206,6 +203,10 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                     </button>
                                     {openMenuId === inv.id && (
                                         <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-white/10 rounded-lg shadow-xl z-10 py-1 origin-top-right animate-in fade-in-25 slide-in-from-top-2">
+                                            <button onClick={() => { onViewHistory(inv); setOpenMenuId(null); }} className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 transition-colors">
+                                                <ClockIcon className="w-5 h-5 text-blue-400" />
+                                                <span>View History</span>
+                                            </button>
                                             <button onClick={() => handleBookPLClick(inv.id)} className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700/50 transition-colors">
                                                 <ReceiptPercentIcon className="w-5 h-5 text-yellow-400" />
                                                 <span>Book Profit/Loss</span>

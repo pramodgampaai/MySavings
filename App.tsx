@@ -10,6 +10,7 @@ import { AddInvestmentScreen } from './components/AddInvestmentScreen';
 import { CurrencySettingsScreen } from './components/CurrencySettingsTile';
 import { EarningSourcesSettingsScreen } from './components/EarningSourcesSettingsTile';
 import { TransactionHistoryScreen } from './components/TransactionHistoryScreen';
+import { InvestmentPerformanceScreen } from './components/InvestmentPerformanceScreen';
 
 const App: React.FC = () => {
   const [activeScreen, setActiveScreen] = useState<Screen>('dashboard');
@@ -240,7 +241,12 @@ const App: React.FC = () => {
   const renderScreen = () => {
     switch(activeScreen) {
       case 'dashboard':
-        return <DashboardScreen investments={investments} totalEarnings={totalEarnings} currency={currency} />;
+        return <DashboardScreen 
+                    investments={investments} 
+                    totalEarnings={totalEarnings} 
+                    currency={currency} 
+                    onViewPerformance={() => setActiveScreen('investmentPerformance')}
+                />;
       case 'earnings':
         return <EarningsScreen 
                     earnings={earnings} 
@@ -337,8 +343,19 @@ const App: React.FC = () => {
                 setActiveScreen('investments');
             }}
         />;
+      case 'investmentPerformance':
+        return <InvestmentPerformanceScreen
+            investments={investments}
+            currency={currency}
+            onBack={() => setActiveScreen('dashboard')}
+        />;
       default:
-        return <DashboardScreen investments={investments} totalEarnings={totalEarnings} currency={currency} />;
+        return <DashboardScreen 
+                    investments={investments} 
+                    totalEarnings={totalEarnings} 
+                    currency={currency} 
+                    onViewPerformance={() => setActiveScreen('investmentPerformance')}
+                />;
     }
   };
 

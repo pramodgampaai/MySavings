@@ -15,6 +15,7 @@ const NavItem: React.FC<{
     label: string;
 }> = ({ screen, activeScreen, setActiveScreen, icon, label }) => {
     const isActive = activeScreen === screen || 
+                     (screen === 'dashboard' && activeScreen === 'investmentPerformance') ||
                      (screen === 'earnings' && activeScreen === 'addEarning') ||
                      (screen === 'investments' && (activeScreen === 'addInvestment' || activeScreen === 'transactionHistory')) ||
                      (screen === 'settings' && ['currencySettings', 'earningSourcesSettings'].includes(activeScreen));

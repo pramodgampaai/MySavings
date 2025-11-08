@@ -18,4 +18,4 @@ export interface Investment {
   history: InvestmentHistoryPoint[];
 }
 
-export type Screen = 'dashboard' | 'earnings' | 'addEarning' | 'investments' | 'addInvestment' | 'settings' | 'currencySettings' | 'earningSourcesSettings' | 'transactionHistory';
+export type Screen = 'dashboard' | 'earnings' | 'addEarning' | 'investments' | 'addInvestment' | 'settings' | 'currencySettings' | 'earningSourcesSettings' | 'transactionHistory' | 'investmentPerformance';
