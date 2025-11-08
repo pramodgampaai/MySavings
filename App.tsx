@@ -251,7 +251,7 @@ const App: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     const date = new Date().toISOString().split('T')[0];
-    link.download = `savvy_savings_backup_${date}.json`;
+    link.download = `my_savings_backup_${date}.json`;
     link.href = url;
     document.body.appendChild(link);
     link.click();
