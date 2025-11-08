@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-// Fix: Import InvestmentHistoryPoint to use as a type.
 import { Investment, InvestmentHistoryPoint } from '../types';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line } from 'recharts';
 import { NoDataIcon, ChevronLeftIcon } from './Icons';
@@ -52,7 +51,7 @@ interface InvestmentPerformanceScreenProps {
   onBack: () => void;
 }
 
-export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenProps> = ({ investments, currency, onBack }) => {
+const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenProps> = ({ investments, currency, onBack }) => {
   const [selectedInvestmentId, setSelectedInvestmentId] = useState<string>('');
 
   const chartData = useMemo(() => {
@@ -67,7 +66,6 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
         if (allHistoryPoints.length === 0) return [];
         
         const uniqueDates = [...new Set(allHistoryPoints.map(p => p.date))]
-            // Fix: Explicitly type sort arguments to prevent them from being inferred as `unknown`.
             .sort((a: string, b: string) => new Date(a).getTime() - new Date(b).getTime());
 
         const aggregatedData = uniqueDates.map((date: string) => {
@@ -76,9 +74,7 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
 
             investments.forEach(inv => {
                 const relevantHistory = inv.history
-                    // Fix: Explicitly type `date` in the parent `map` to ensure correct type here.
                     .filter(p => new Date(p.date).getTime() <= new Date(date).getTime())
-                    // Fix: Explicitly type sort arguments.
                     .sort((a: InvestmentHistoryPoint, b: InvestmentHistoryPoint) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
                 if (relevantHistory.length > 0) {
@@ -88,7 +84,7 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
             });
 
             return {
-                date: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                date: new Date(`${date}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
                 marketValue: totalMarketValue,
                 bookValue: totalBookValue,
             };
@@ -100,7 +96,6 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
     const investment = investments.find(inv => inv.id === selectedInvestmentId);
     if (!investment) return [];
     
-    // Fix: Explicitly type sort arguments.
     const sortedHistory = [...investment.history].sort((a: InvestmentHistoryPoint, b: InvestmentHistoryPoint) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     let cumulativeContribution = 0;
@@ -115,7 +110,7 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
         if (point.note === "Loss Booked") eventType = 'loss';
 
         return {
-            date: new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            date: new Date(`${point.date}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
             marketValue: lastKnownMarketValue,
             bookValue: cumulativeContribution,
             note: point.note,
@@ -220,3 +215,5 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
     </div>
   );
 };
+
+export default InvestmentPerformanceScreen;

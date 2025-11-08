@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
 import { Earning, Investment, InvestmentHistoryPoint, Screen } from './types';
 import { Navbar } from './components/Navbar';
-import { DashboardScreen } from './components/DashboardScreen';
-import { EarningsScreen } from './components/EarningsScreen';
-import { InvestmentsScreen } from './components/InvestmentsScreen';
-import { SettingsScreen } from './components/SettingsScreen';
-import { AddEarningScreen } from './components/AddEarningScreen';
-import { AddInvestmentScreen } from './components/AddInvestmentScreen';
-import { CurrencySettingsScreen } from './components/CurrencySettingsTile';
-import { EarningSourcesSettingsScreen } from './components/EarningSourcesSettingsTile';
-import { TransactionHistoryScreen } from './components/TransactionHistoryScreen';
-import { InvestmentPerformanceScreen } from './components/InvestmentPerformanceScreen';
+import LoadingSpinner from './components/LoadingSpinner';
+
+const DashboardScreen = lazy(() => import('./components/DashboardScreen'));
+const EarningsScreen = lazy(() => import('./components/EarningsScreen'));
+const InvestmentsScreen = lazy(() => import('./components/InvestmentsScreen'));
+const SettingsScreen = lazy(() => import('./components/SettingsScreen'));
+const AddEarningScreen = lazy(() => import('./components/AddEarningScreen'));
+const AddInvestmentScreen = lazy(() => import('./components/AddInvestmentScreen'));
+const CurrencySettingsScreen = lazy(() => import('./components/CurrencySettingsScreen'));
+const EarningSourcesSettingsScreen = lazy(() => import('./components/EarningSourcesSettingsScreen'));
+const TransactionHistoryScreen = lazy(() => import('./components/TransactionHistoryScreen'));
+const InvestmentPerformanceScreen = lazy(() => import('./components/InvestmentPerformanceScreen'));
 
 const App: React.FC = () => {
   const [activeScreen, setActiveScreen] = useState<Screen>('dashboard');
@@ -435,7 +437,9 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-black text-gray-200">
       <div className="container mx-auto max-w-4xl pb-20 md:pb-0">
         <main>
-          {renderScreen()}
+          <Suspense fallback={<LoadingSpinner />}>
+            {renderScreen()}
+          </Suspense>
         </main>
       </div>
       <Navbar activeScreen={activeScreen} setActiveScreen={setActiveScreen} />

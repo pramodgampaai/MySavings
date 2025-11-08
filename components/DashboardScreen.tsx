@@ -11,7 +11,7 @@ interface DashboardScreenProps {
 }
 
 
-export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, totalEarnings, currency, onViewPerformance }) => {
+const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, totalEarnings, currency, onViewPerformance }) => {
   const totalCurrentValue = useMemo(() => {
     return investments.reduce((total, inv) => {
         const latestValue = inv.history.length > 0 ? inv.history[inv.history.length - 1].value : 0;
@@ -55,3 +55,5 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, t
     </div>
   );
 };
+
+export default DashboardScreen;

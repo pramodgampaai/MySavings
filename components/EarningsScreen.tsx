@@ -11,7 +11,7 @@ interface EarningsScreenProps {
   onEditEarning: (earning: Earning) => void;
 }
 
-export const EarningsScreen: React.FC<EarningsScreenProps> = ({ earnings, deleteEarning, currency, onAddEarning, onEditEarning }) => {
+const EarningsScreen: React.FC<EarningsScreenProps> = ({ earnings, deleteEarning, currency, onAddEarning, onEditEarning }) => {
     const handleDelete = (id: string) => {
         if (window.confirm('Are you sure you want to delete this earning?')) {
             deleteEarning(id);
@@ -59,3 +59,5 @@ export const EarningsScreen: React.FC<EarningsScreenProps> = ({ earnings, delete
         </div>
     );
 };
+
+export default EarningsScreen;

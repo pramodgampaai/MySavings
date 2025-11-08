@@ -9,7 +9,7 @@ interface AddInvestmentScreenProps {
   onCancel: () => void;
 }
 
-export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInvestment, updateInvestment, investmentToEdit, onCancel }) => {
+const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInvestment, updateInvestment, investmentToEdit, onCancel }) => {
   const [name, setName] = useState('');
   const [initialAmount, setInitialAmount] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
@@ -113,3 +113,5 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
     </div>
   );
 };
+
+export default AddInvestmentScreen;

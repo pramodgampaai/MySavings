@@ -32,7 +32,7 @@ const SettingsTile: React.FC<SettingsTileProps> = ({ title, description, icon, o
 );
 
 
-export const SettingsScreen: React.FC<SettingsScreenProps> = ({ setActiveScreen, onExport, onImport }) => {
+const SettingsScreen: React.FC<SettingsScreenProps> = ({ setActiveScreen, onExport, onImport }) => {
   return (
     <div className="p-4 md:p-6">
       <h1 className="text-2xl font-bold text-gray-100 mb-8">Settings</h1>
@@ -69,3 +69,5 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ setActiveScreen,
     </div>
   );
 };
+
+export default SettingsScreen;

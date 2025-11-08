@@ -16,7 +16,7 @@ interface InvestmentsScreenProps {
   addInvestmentHistoryPoint: (investmentId: string, historyPoint: InvestmentHistoryPoint) => void;
 }
 
-export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investments, deleteInvestment, currency, onAddInvestment, onEditInvestment, addFundsToInvestment, bookProfitOrLoss, onViewHistory, addInvestmentHistoryPoint }) => {
+const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investments, deleteInvestment, currency, onAddInvestment, onEditInvestment, addFundsToInvestment, bookProfitOrLoss, onViewHistory, addInvestmentHistoryPoint }) => {
     const [addingFundsTo, setAddingFundsTo] = useState<string | null>(null);
     const [fundAmount, setFundAmount] = useState('');
     const [fundDate, setFundDate] = useState(new Date().toISOString().split('T')[0]);
@@ -329,3 +329,5 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
         </div>
     );
 };
+
+export default InvestmentsScreen;

@@ -10,7 +10,7 @@ interface AddEarningScreenProps {
   earningSources: string[];
 }
 
-export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, updateEarning, earningToEdit, onCancel, earningSources }) => {
+const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, updateEarning, earningToEdit, onCancel, earningSources }) => {
   const [source, setSource] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -104,3 +104,5 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
     </div>
   );
 };
+
+export default AddEarningScreen;

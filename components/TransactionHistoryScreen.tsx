@@ -11,7 +11,7 @@ interface TransactionHistoryScreenProps {
 
 type FilterType = 'all' | 'contributions' | 'withdrawals' | 'marketValue';
 
-export const TransactionHistoryScreen: React.FC<TransactionHistoryScreenProps> = ({ investment, currency, onBack }) => {
+const TransactionHistoryScreen: React.FC<TransactionHistoryScreenProps> = ({ investment, currency, onBack }) => {
   const [filter, setFilter] = useState<FilterType>('contributions');
   
   const sortedAndFilteredHistory = useMemo(() => {
@@ -50,57 +50,52 @@ export const TransactionHistoryScreen: React.FC<TransactionHistoryScreenProps> =
         </button>
         <div>
           <h1 className="text-2xl font-bold text-gray-100">Transaction History</h1>
-          <p className="text-gray-400">{investment.name}</p>
+          <p className="text-sm text-gray-400 truncate">{investment.name}</p>
         </div>
       </div>
-      
-      <div className="bg-gray-900 border border-white/10 p-4 rounded-xl shadow-2xl">
-        <div className="flex items-center gap-2 mb-4">
-            <label htmlFor="filter-select" className="flex items-center text-sm text-gray-400">
-                <FunnelIcon className="w-5 h-5 mr-2" />
-                Filter by:
-            </label>
-            <select
-                id="filter-select"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value as FilterType)}
-                className="px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-base focus:ring-indigo-500 focus:border-indigo-500"
-            >
-                <option value="contributions">Contributions</option>
-                <option value="withdrawals">Withdrawals</option>
-                <option value="marketValue">Market Value</option>
-                <option value="all">All Transactions</option>
-            </select>
-        </div>
-        
-        <div className="max-h-[60vh] overflow-y-auto space-y-2 pr-2">
-            {sortedAndFilteredHistory.length > 0 ? (
-                sortedAndFilteredHistory.map((historyPoint, index) => (
-                    <div key={index} className="flex justify-between items-center text-sm bg-gray-800/50 p-3 rounded-md">
-                        <div>
-                            <p className="text-gray-300">{new Date(historyPoint.date).toLocaleDateString()}</p>
-                            <p className="text-xs text-gray-500">{historyPoint.note || (historyPoint.contribution >= 0 ? 'Funds Added' : 'Withdrawal')}</p>
-                        </div>
-                        
-                        {historyPoint.note === 'Value Update' ? (
-                            <div className="text-right">
-                                <span className="font-semibold text-blue-400">
-                                    {formatCurrency(historyPoint.value, currency)}
-                                </span>
-                                <p className="text-xs text-gray-500 -mt-1">Market Value</p>
-                            </div>
-                        ) : (
-                            <span className={`font-semibold ${getTransactionColor(historyPoint)}`}>
-                                {historyPoint.contribution > 0 ? '+' : ''}{formatCurrency(historyPoint.contribution, currency)}
-                            </span>
-                        )}
-                    </div>
-                ))
+
+      <div className="mb-6">
+        <label htmlFor="filter-select" className="block text-sm font-medium text-gray-400 mb-2 flex items-center gap-2">
+            <FunnelIcon className="w-5 h-5" />
+            Filter by type:
+        </label>
+        <select
+            id="filter-select"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as FilterType)}
+            className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-indigo-500 focus:border-indigo-500 text-base"
+        >
+            <option value="all">All Transactions</option>
+            <option value="contributions">Contributions</option>
+            <option value="withdrawals">Withdrawals</option>
+            <option value="marketValue">Market Value</option>
+        </select>
+      </div>
+
+      <div className="space-y-4">
+        {sortedAndFilteredHistory.map((h, index) => (
+          <div key={`${h.date}-${index}`} className="bg-gray-900 border border-white/10 p-4 rounded-xl flex justify-between items-center">
+            <div>
+              <p className="font-semibold text-gray-200">{h.note || 'Transaction'}</p>
+              <p className="text-sm text-gray-400">{new Date(`${h.date}T00:00:00`).toLocaleDateString()}</p>
+            </div>
+            {h.note === 'Value Update' ? (
+                 <p className="text-lg font-semibold text-blue-400">{formatCurrency(h.value, currency)}</p>
             ) : (
-                <p className="text-sm text-center text-gray-500 py-8">No transactions found for this filter.</p>
+                <p className={`text-lg font-semibold ${getTransactionColor(h)}`}>
+                    {h.contribution > 0 ? '+' : ''}{formatCurrency(h.contribution, currency)}
+                </p>
             )}
-        </div>
+          </div>
+        ))}
+        {sortedAndFilteredHistory.length === 0 && (
+          <div className="text-center text-gray-500 py-8 bg-gray-900 border border-white/10 rounded-xl">
+            <p>No transactions match the current filter.</p>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
+export default TransactionHistoryScreen;
