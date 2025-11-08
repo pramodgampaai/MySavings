@@ -240,7 +240,7 @@ const App: React.FC = () => {
   const renderScreen = () => {
     switch(activeScreen) {
       case 'dashboard':
-        return <DashboardScreen investments={investments} totalEarnings={totalEarnings} addInvestmentHistoryPoint={addInvestmentHistoryPoint} currency={currency} />;
+        return <DashboardScreen investments={investments} totalEarnings={totalEarnings} currency={currency} />;
       case 'earnings':
         return <EarningsScreen 
                     earnings={earnings} 
@@ -292,6 +292,7 @@ const App: React.FC = () => {
                         setViewingInvestmentHistory(investment);
                         setActiveScreen('transactionHistory');
                     }}
+                    addInvestmentHistoryPoint={addInvestmentHistoryPoint}
                 />;
       case 'addInvestment':
         return <AddInvestmentScreen
@@ -337,7 +338,7 @@ const App: React.FC = () => {
             }}
         />;
       default:
-        return <DashboardScreen investments={investments} totalEarnings={totalEarnings} addInvestmentHistoryPoint={addInvestmentHistoryPoint} currency={currency} />;
+        return <DashboardScreen investments={investments} totalEarnings={totalEarnings} currency={currency} />;
     }
   };
 

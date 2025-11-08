@@ -1,100 +1,12 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Investment, InvestmentHistoryPoint } from '../types';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line } from 'recharts';
 import { NoDataIcon } from './Icons';
 import { formatCurrency } from '../utils/currency';
 
-interface InvestmentItemProps {
-    investment: Investment;
-    // FIX: Changed Omit<InvestmentHistoryPoint, 'id'>> to InvestmentHistoryPoint to match the actual type.
-    addInvestmentHistoryPoint: (investmentId: string, historyPoint: InvestmentHistoryPoint) => void;
-    currency: string;
-}
-
-const InvestmentItem: React.FC<InvestmentItemProps> = ({ investment, addInvestmentHistoryPoint, currency }) => {
-    const [isAdding, setIsAdding] = useState(false);
-    const [value, setValue] = useState('');
-    const date = new Date().toISOString().split('T')[0];
-
-    const latestHistoryPoint = investment.history.length > 0 ? investment.history[investment.history.length - 1] : { value: 0 };
-    const totalContributions = useMemo(() => investment.history.reduce((sum, h) => sum + h.contribution, 0), [investment.history]);
-    const profitLoss = latestHistoryPoint.value - totalContributions;
-
-    const handleAddUpdate = () => {
-        if (!value) {
-            alert('Please provide a valid market value.');
-            return;
-        }
-        
-        addInvestmentHistoryPoint(investment.id, { 
-            value: parseFloat(value), 
-            contribution: 0,
-            date,
-            note: "Value Update"
-        });
-        setValue('');
-        setIsAdding(false);
-    };
-
-    return (
-        <div className="bg-gray-900 border border-white/10 p-4 rounded-xl mb-4 transition-all duration-300">
-            <div className="flex justify-between items-start">
-                <div>
-                    <h3 className="font-semibold text-gray-200">{investment.name}</h3>
-                    <p className="text-2xl font-bold text-indigo-400">{formatCurrency(latestHistoryPoint.value, currency)}</p>
-                    <div className="flex items-baseline gap-2">
-                        <p className={`text-sm font-semibold ${profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                           {profitLoss >= 0 ? '+' : ''}{formatCurrency(profitLoss, currency)}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                           Total P/L
-                        </p>
-                    </div>
-                </div>
-                <button 
-                    onClick={() => setIsAdding(!isAdding)} 
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${isAdding ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300'}`}
-                >
-                    {isAdding ? 'Cancel' : 'Log Market Value'}
-                </button>
-            </div>
-            {isAdding && (
-                <div className="mt-4 pt-4 border-t border-white/10 space-y-4">
-                    <h4 className="font-medium text-base text-gray-200">Log Current Market Value</h4>
-                    <p className="text-xs text-gray-500 -mt-3 mb-2">
-                        Log the investment's current market value to track its performance. The date is automatically set to today.
-                    </p>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Date of Value</label>
-                        <div className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-gray-400">
-                           {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                        </div>
-                    </div>
-                    <div>
-                        <label htmlFor={`value-${investment.id}`} className="block text-sm font-medium text-gray-400 mb-1">Current Market Value</label>
-                        <input
-                            id={`value-${investment.id}`}
-                            type="number"
-                            placeholder="0.00"
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}
-                            className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white placeholder-gray-500"
-                        />
-                    </div>
-                    <button onClick={handleAddUpdate} className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 transition-all transform hover:scale-105">
-                        Save Market Value
-                    </button>
-                </div>
-            )}
-        </div>
-    );
-};
-
-
 interface DashboardScreenProps {
   investments: Investment[];
   totalEarnings: number;
-  addInvestmentHistoryPoint: (investmentId: string, historyPoint: InvestmentHistoryPoint) => void;
   currency: string;
 }
 
@@ -139,7 +51,7 @@ const CustomTooltip = ({ active, payload, label, currency }: any) => {
     return null;
 };
 
-export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, totalEarnings, addInvestmentHistoryPoint, currency }) => {
+export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, totalEarnings, currency }) => {
   const [userSelectedId, setUserSelectedId] = useState<string | null>(null);
 
   const selectedInvestmentId = useMemo(() => {
@@ -269,21 +181,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, t
             <div className="text-center text-gray-500 py-8 flex flex-col items-center">
                 <NoDataIcon className="w-16 h-16 text-gray-600 mb-4"/>
                 <p>Add an investment to see its performance chart.</p>
-            </div>
-          )}
-      </div>
-
-      <div>
-          <h2 className="text-xl font-semibold text-gray-200 mb-4">Your Investments</h2>
-          {investments.length > 0 ? (
-              investments.map(inv => (
-                  <InvestmentItem key={inv.id} investment={inv} addInvestmentHistoryPoint={addInvestmentHistoryPoint} currency={currency} />
-              ))
-          ) : (
-            <div className="text-center bg-gray-900 border border-white/10 p-8 rounded-xl shadow-2xl flex flex-col items-center">
-                <NoDataIcon className="w-16 h-16 text-gray-600 mb-4"/>
-                <p className="text-gray-500">You haven't added any investments yet.</p>
-                <p className="text-gray-400 text-sm mt-2">Go to the Investments tab to get started.</p>
             </div>
           )}
       </div>

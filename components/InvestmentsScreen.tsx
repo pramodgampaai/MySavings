@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Investment } from '../types';
-import { PencilIcon, TrashIcon, PlusIcon, PlusCircleIcon, ClockIcon, ReceiptPercentIcon, EllipsisVerticalIcon, MagnifyingGlassIcon } from './Icons';
+import { Investment, InvestmentHistoryPoint } from '../types';
+import { PencilIcon, TrashIcon, PlusIcon, PlusCircleIcon, ClockIcon, ReceiptPercentIcon, EllipsisVerticalIcon, MagnifyingGlassIcon, ArrowTrendingUpIcon } from './Icons';
 import { formatCurrency } from '../utils/currency';
 import { DateInput } from './DateInput';
 
@@ -13,24 +13,25 @@ interface InvestmentsScreenProps {
   addFundsToInvestment: (investmentId: string, amount: number, date: string) => void;
   bookProfitOrLoss: (investmentId: string, amount: number, date: string, type: 'profit' | 'loss') => void;
   onViewHistory: (investment: Investment) => void;
+  addInvestmentHistoryPoint: (investmentId: string, historyPoint: InvestmentHistoryPoint) => void;
 }
 
-export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investments, deleteInvestment, currency, onAddInvestment, onEditInvestment, addFundsToInvestment, bookProfitOrLoss, onViewHistory }) => {
-    // State for the inline "Add Funds" form
+export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investments, deleteInvestment, currency, onAddInvestment, onEditInvestment, addFundsToInvestment, bookProfitOrLoss, onViewHistory, addInvestmentHistoryPoint }) => {
     const [addingFundsTo, setAddingFundsTo] = useState<string | null>(null);
     const [fundAmount, setFundAmount] = useState('');
     const [fundDate, setFundDate] = useState(new Date().toISOString().split('T')[0]);
     
-    // State for the "Book Profit/Loss" form
     const [bookingPLFor, setBookingPLFor] = useState<string | null>(null);
     const [plAmount, setPlAmount] = useState('');
     const [plDate, setPlDate] = useState(new Date().toISOString().split('T')[0]);
     const [plType, setPlType] = useState<'profit' | 'loss'>('profit');
 
-    // State for the "More Options" menu
+    const [loggingMarketValueFor, setLoggingMarketValueFor] = useState<string | null>(null);
+    const [marketValue, setMarketValue] = useState('');
+    const marketValueDate = new Date().toISOString().split('T')[0];
+
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     
-    // State for the search filter
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
@@ -71,13 +72,19 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
         return new Date(investment.history[0].date).toLocaleDateString();
     }
     
+    const closeAllForms = () => {
+        setAddingFundsTo(null);
+        setBookingPLFor(null);
+        setLoggingMarketValueFor(null);
+    }
+
     const handleAddFundsClick = (investmentId: string) => {
         setOpenMenuId(null);
         if (addingFundsTo === investmentId) {
             setAddingFundsTo(null);
         } else {
+            closeAllForms();
             setAddingFundsTo(investmentId);
-            setBookingPLFor(null);
             setFundAmount('');
             setFundDate(new Date().toISOString().split('T')[0]);
         }
@@ -99,8 +106,8 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
         if (bookingPLFor === investmentId) {
             setBookingPLFor(null);
         } else {
+            closeAllForms();
             setBookingPLFor(investmentId);
-            setAddingFundsTo(null);
             setPlAmount('');
             setPlDate(new Date().toISOString().split('T')[0]);
             setPlType('profit');
@@ -116,6 +123,32 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
         }
         bookProfitOrLoss(investmentId, amount, plDate, plType);
         setBookingPLFor(null);
+    };
+
+    const handleLogMarketValueClick = (investmentId: string) => {
+        if (loggingMarketValueFor === investmentId) {
+            setLoggingMarketValueFor(null);
+        } else {
+            closeAllForms();
+            setLoggingMarketValueFor(investmentId);
+            setMarketValue('');
+        }
+    };
+
+    const handleLogMarketValueSubmit = (e: React.FormEvent, investmentId: string) => {
+        e.preventDefault();
+        const value = parseFloat(marketValue);
+        if (isNaN(value) || value < 0) {
+            alert("Please enter a valid, non-negative market value.");
+            return;
+        }
+        addInvestmentHistoryPoint(investmentId, {
+            value: value,
+            contribution: 0,
+            date: marketValueDate,
+            note: "Value Update"
+        });
+        setLoggingMarketValueFor(null);
     };
 
     return (
@@ -156,6 +189,9 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                             <div className="flex items-center gap-1 flex-shrink-0">
                                 <button onClick={() => onViewHistory(inv)} className="p-2 text-gray-400 hover:text-blue-400 transition-colors" title="View Transaction History">
                                     <ClockIcon className="w-5 h-5" />
+                                </button>
+                                <button onClick={() => handleLogMarketValueClick(inv.id)} className="p-2 text-gray-400 hover:text-indigo-400 transition-colors" title="Log Market Value">
+                                    <ArrowTrendingUpIcon className="w-6 h-6" />
                                 </button>
                                 <button onClick={() => handleAddFundsClick(inv.id)} className="p-2 text-gray-400 hover:text-green-400 transition-colors" title="Add Funds">
                                     <PlusCircleIcon className="w-6 h-6" />
@@ -244,6 +280,36 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                     </button>
                                 </div>
                             </form>
+                        )}
+                        {loggingMarketValueFor === inv.id && (
+                             <form onSubmit={(e) => handleLogMarketValueSubmit(e, inv.id)} className="mt-4 pt-4 border-t border-white/10 space-y-3">
+                                <h4 className="font-medium text-sm text-gray-400">Log market value for <span className="font-bold text-gray-200">{inv.name}</span></h4>
+                                 <div>
+                                     <label className="block text-xs font-medium text-gray-400 mb-1">Date of Value</label>
+                                     <div className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-gray-400">
+                                        {new Date(marketValueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                     </div>
+                                 </div>
+                                 <div>
+                                     <label htmlFor={`value-${inv.id}`} className="block text-xs font-medium text-gray-400 mb-1">Current Market Value</label>
+                                     <input
+                                         id={`value-${inv.id}`}
+                                         type="number"
+                                         placeholder="0.00"
+                                         value={marketValue}
+                                         onChange={(e) => setMarketValue(e.target.value)}
+                                         className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white placeholder-gray-500"
+                                     />
+                                 </div>
+                                 <div className="flex gap-2">
+                                     <button type="button" onClick={() => setLoggingMarketValueFor(null)} className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gray-700 hover:bg-gray-600 transition-colors">
+                                         Cancel
+                                     </button>
+                                     <button type="submit" className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 transition-all">
+                                         Save Value
+                                     </button>
+                                 </div>
+                             </form>
                         )}
                     </div>
                 ))}
