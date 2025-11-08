@@ -115,7 +115,7 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
                 {selectedInvestment ? (
                     <div style={{ width: '100%', height: 300 }}>
                         <ResponsiveContainer>
-                            <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
+                            <AreaChart data={chartData} margin={{ top: 30, right: 30, left: 20, bottom: 10 }}>
                                 <defs>
                                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#818cf8" stopOpacity={0.8}/>
@@ -133,7 +133,7 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
                                         (dataMax) => {
                                             if (typeof dataMax !== 'number' || !isFinite(dataMax)) return 1000;
                                             if (dataMax === 0) return 100;
-                                            return Math.ceil(dataMax * 1.1);
+                                            return Math.ceil(dataMax * 1.05);
                                         }
                                     ]}
                                 />
