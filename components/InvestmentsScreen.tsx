@@ -139,7 +139,7 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                     placeholder="Search investments by name..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base"
                 />
             </div>
 
@@ -194,13 +194,13 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                     placeholder="Amount to add"
                                     value={fundAmount}
                                     onChange={(e) => setFundAmount(e.target.value)}
-                                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white"
+                                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
                                 />
                                 <input
                                     type="date"
                                     value={fundDate}
                                     onChange={(e) => setFundDate(e.target.value)}
-                                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white"
+                                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
                                 />
                                 <div className="flex gap-2">
                                     <button type="button" onClick={() => setAddingFundsTo(null)} className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gray-700 hover:bg-gray-600 transition-colors">
@@ -228,13 +228,13 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                     placeholder="Amount"
                                     value={plAmount}
                                     onChange={(e) => setPlAmount(e.target.value)}
-                                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white"
+                                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
                                 />
                                 <input
                                     type="date"
                                     value={plDate}
                                     onChange={(e) => setPlDate(e.target.value)}
-                                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white"
+                                    className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
                                 />
                                 <div className="flex gap-2">
                                     <button type="button" onClick={() => setBookingPLFor(null)} className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gray-700 hover:bg-gray-600 transition-colors">

@@ -55,7 +55,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             id="source"
             value={source}
             onChange={(e) => setSource(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white"
+            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
           >
             {earningSources.length === 0 && <option className="bg-gray-800 text-gray-500" value="" disabled>Add a source in Settings</option>}
             {earningSources.map((s) => (
@@ -71,7 +71,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white"
+            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
           />
         </div>
         <div>
@@ -81,7 +81,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             id="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-white"
+            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
           />
         </div>
         <div className="flex gap-4">

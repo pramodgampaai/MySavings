@@ -64,7 +64,7 @@ export const TransactionHistoryScreen: React.FC<TransactionHistoryScreenProps> =
                 id="filter-select"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as FilterType)}
-                className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-base focus:ring-indigo-500 focus:border-indigo-500"
             >
                 <option value="contributions">Contributions</option>
                 <option value="withdrawals">Withdrawals</option>

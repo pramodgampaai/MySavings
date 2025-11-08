@@ -66,7 +66,7 @@ const InvestmentItem: React.FC<InvestmentItemProps> = ({ investment, addInvestme
                     </p>
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-1">Date of Value</label>
-                        <div className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-400">
+                        <div className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-base text-gray-400">
                            {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                         </div>
                     </div>
@@ -78,7 +78,7 @@ const InvestmentItem: React.FC<InvestmentItemProps> = ({ investment, addInvestme
                             placeholder="0.00"
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
-                            className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white"
+                            className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
                         />
                     </div>
                     <button onClick={handleAddUpdate} className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 transition-all transform hover:scale-105">
@@ -227,7 +227,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, t
               <select 
                 value={selectedInvestmentId ?? ''} 
                 onChange={e => setUserSelectedId(e.target.value)}
-                className="mb-4 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-indigo-500 focus:border-indigo-500"
+                className="mb-4 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-indigo-500 focus:border-indigo-500 text-base"
                 >
                 {investments.map(inv => <option className="bg-gray-800 text-white" key={inv.id} value={inv.id}>{inv.name}</option>)}
               </select>
