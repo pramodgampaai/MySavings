@@ -59,6 +59,8 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
     }
   };
 
+  const baseInputClasses = 'mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left';
+
   return (
     <div className="p-4 md:p-6">
       <h1 className="text-3xl font-bold text-gray-100 mb-8">{investmentToEdit ? 'Edit Investment' : 'Add New Investment'}</h1>
@@ -71,7 +73,7 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Mutual Fund, Stocks"
-            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${'text-white'}`}
+            className={`${baseInputClasses} text-white`}
           />
         </div>
         <div>
@@ -82,7 +84,7 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
             value={initialAmount}
             onChange={(e) => setInitialAmount(e.target.value)}
             placeholder="0.00"
-            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${'text-white'}`}
+            className={`${baseInputClasses} text-white`}
           />
         </div>
         <div>
@@ -95,7 +97,7 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
               setStartDate(e.target.value);
               setIsDateDefault(false);
             }}
-            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
+            className={`${baseInputClasses} ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
           />
         </div>
         <div className="flex gap-4">
