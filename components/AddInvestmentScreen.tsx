@@ -71,7 +71,7 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Mutual Fund, Stocks"
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white text-left"
+            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${'text-white'}`}
           />
         </div>
         <div>
@@ -82,7 +82,7 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
             value={initialAmount}
             onChange={(e) => setInitialAmount(e.target.value)}
             placeholder="0.00"
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white text-left"
+            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${'text-white'}`}
           />
         </div>
         <div>
