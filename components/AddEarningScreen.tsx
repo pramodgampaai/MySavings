@@ -59,7 +59,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             id="source"
             value={source}
             onChange={(e) => setSource(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
+            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white text-left placeholder-gray-500"
           >
             {earningSources.map(s => <option key={s} value={s}>{s}</option>)}
             {earningSources.length === 0 && <option value="">No sources defined</option>}
@@ -73,7 +73,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
+            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white text-left"
           />
         </div>
         <div>
@@ -86,7 +86,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
                 setDate(e.target.value);
                 setIsDateDefault(false);
             }}
-            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
+            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
           />
         </div>
         <div className="flex gap-4">
