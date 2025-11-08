@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Investment } from '../types';
+import { DateInput } from './DateInput';
 
 interface AddInvestmentScreenProps {
   addInvestment: (investment: { name: string, initialAmount: number, startDate: string }) => void;
@@ -12,7 +13,6 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
   const [name, setName] = useState('');
   const [initialAmount, setInitialAmount] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [isDateDefault, setIsDateDefault] = useState(true);
 
   useEffect(() => {
     if (investmentToEdit) {
@@ -21,12 +21,10 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
         setInitialAmount(String(investmentToEdit.history[0].value));
         setStartDate(investmentToEdit.history[0].date);
       }
-      setIsDateDefault(false);
     } else {
         setName('');
         setInitialAmount('');
         setStartDate(new Date().toISOString().split('T')[0]);
-        setIsDateDefault(true);
     }
   }, [investmentToEdit]);
 
@@ -89,15 +87,10 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
         </div>
         <div>
           <label htmlFor="startDate" className="block text-sm font-medium text-gray-400 mb-1">Start Date</label>
-          <input
-            type="date"
+          <DateInput
             id="startDate"
             value={startDate}
-            onChange={(e) => {
-              setStartDate(e.target.value);
-              setIsDateDefault(false);
-            }}
-            className={`${baseInputClasses} ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
+            onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
         <div className="flex gap-4">

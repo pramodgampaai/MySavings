@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Investment } from '../types';
 import { PencilIcon, TrashIcon, PlusIcon, PlusCircleIcon, ClockIcon, ReceiptPercentIcon, EllipsisVerticalIcon, MagnifyingGlassIcon } from './Icons';
 import { formatCurrency } from '../utils/currency';
+import { DateInput } from './DateInput';
 
 interface InvestmentsScreenProps {
   investments: Investment[];
@@ -196,11 +197,10 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                     onChange={(e) => setFundAmount(e.target.value)}
                                     className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white placeholder-gray-500"
                                 />
-                                <input
-                                    type="date"
+                                <DateInput 
+                                    id={`fund-date-${inv.id}`}
                                     value={fundDate}
                                     onChange={(e) => setFundDate(e.target.value)}
-                                    className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white text-left"
                                 />
                                 <div className="flex gap-2">
                                     <button type="button" onClick={() => setAddingFundsTo(null)} className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gray-700 hover:bg-gray-600 transition-colors">
@@ -230,11 +230,10 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                     onChange={(e) => setPlAmount(e.target.value)}
                                     className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white placeholder-gray-500"
                                 />
-                                <input
-                                    type="date"
+                                <DateInput 
+                                    id={`pl-date-${inv.id}`}
                                     value={plDate}
                                     onChange={(e) => setPlDate(e.target.value)}
-                                    className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white text-left"
                                 />
                                 <div className="flex gap-2">
                                     <button type="button" onClick={() => setBookingPLFor(null)} className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gray-700 hover:bg-gray-600 transition-colors">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Earning } from '../types';
+import { DateInput } from './DateInput';
 
 interface AddEarningScreenProps {
   addEarning: (earning: Omit<Earning, 'id'>) => void;
@@ -13,19 +14,16 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
   const [source, setSource] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [isDateDefault, setIsDateDefault] = useState(true);
 
   useEffect(() => {
     if (earningToEdit) {
       setSource(earningToEdit.source);
       setAmount(String(earningToEdit.amount));
       setDate(earningToEdit.date);
-      setIsDateDefault(false);
     } else {
       setSource(earningSources.length > 0 ? earningSources[0] : '');
       setAmount('');
       setDate(new Date().toISOString().split('T')[0]);
-      setIsDateDefault(true);
     }
   }, [earningToEdit, earningSources]);
 
@@ -80,15 +78,10 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
         </div>
         <div>
           <label htmlFor="date" className="block text-sm font-medium text-gray-400 mb-1">Date</label>
-          <input
-            type="date"
+          <DateInput 
             id="date"
             value={date}
-            onChange={(e) => {
-                setDate(e.target.value);
-                setIsDateDefault(false);
-            }}
-            className={`${baseInputClasses} ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
+            onChange={(e) => setDate(e.target.value)}
           />
         </div>
         <div className="flex gap-4">
