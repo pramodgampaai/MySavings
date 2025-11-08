@@ -124,7 +124,19 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
                                 <XAxis dataKey="date" stroke="#9ca3af" fontSize={12} />
-                                <YAxis stroke="#9ca3af" fontSize={12} tickFormatter={(value) => formatCurrency(value as number, currency)} domain={['dataMin - 100', 'auto']}/>
+                                <YAxis 
+                                    stroke="#9ca3af" 
+                                    fontSize={12} 
+                                    tickFormatter={(value) => formatCurrency(value as number, currency)} 
+                                    domain={[
+                                        'dataMin - 100', 
+                                        (dataMax) => {
+                                            if (typeof dataMax !== 'number' || !isFinite(dataMax)) return 1000;
+                                            if (dataMax === 0) return 100;
+                                            return Math.ceil(dataMax * 1.1);
+                                        }
+                                    ]}
+                                />
                                 <Tooltip content={<CustomTooltip currency={currency} />} />
                                 <Legend wrapperStyle={{ color: '#9ca3af' }} />
                                 <Area 
