@@ -12,6 +12,7 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
   const [name, setName] = useState('');
   const [initialAmount, setInitialAmount] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [isDateDefault, setIsDateDefault] = useState(true);
 
   useEffect(() => {
     if (investmentToEdit) {
@@ -20,8 +21,12 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
         setInitialAmount(String(investmentToEdit.history[0].value));
         setStartDate(investmentToEdit.history[0].date);
       }
+      setIsDateDefault(false);
     } else {
         setName('');
+        setInitialAmount('');
+        setStartDate(new Date().toISOString().split('T')[0]);
+        setIsDateDefault(true);
     }
   }, [investmentToEdit]);
 
@@ -86,8 +91,11 @@ export const AddInvestmentScreen: React.FC<AddInvestmentScreenProps> = ({ addInv
             type="date"
             id="startDate"
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
+            onChange={(e) => {
+              setStartDate(e.target.value);
+              setIsDateDefault(false);
+            }}
+            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
           />
         </div>
         <div className="flex gap-4">

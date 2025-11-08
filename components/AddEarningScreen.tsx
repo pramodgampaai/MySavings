@@ -13,15 +13,20 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
   const [source, setSource] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [isDateDefault, setIsDateDefault] = useState(true);
+
 
   useEffect(() => {
     if (earningToEdit) {
       setSource(earningToEdit.source);
       setAmount(String(earningToEdit.amount));
       setDate(earningToEdit.date);
+      setIsDateDefault(false);
     } else {
-      // If creating a new one, default to the first source if available
       setSource(earningSources.length > 0 ? earningSources[0] : '');
+      setAmount('');
+      setDate(new Date().toISOString().split('T')[0]);
+      setIsDateDefault(true);
     }
   }, [earningToEdit, earningSources]);
 
@@ -80,8 +85,11 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             type="date"
             id="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
+            onChange={(e) => {
+              setDate(e.target.value);
+              setIsDateDefault(false);
+            }}
+            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
           />
         </div>
         <div className="flex gap-4">

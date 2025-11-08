@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Investment, InvestmentHistoryPoint } from '../types';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line } from 'recharts';
 import { NoDataIcon } from './Icons';
-import { formatCurrency } from '../utils/currency';
+import { formatCurrency, formatCurrencyWhole } from '../utils/currency';
 
 interface InvestmentItemProps {
     investment: Investment;
@@ -66,7 +66,7 @@ const InvestmentItem: React.FC<InvestmentItemProps> = ({ investment, addInvestme
                     </p>
                     <div>
                         <label className="block text-sm font-medium text-gray-400 mb-1">Date of Value</label>
-                        <div className="mt-1 block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-base text-gray-400">
+                        <div className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-gray-400">
                            {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                         </div>
                     </div>
@@ -78,7 +78,7 @@ const InvestmentItem: React.FC<InvestmentItemProps> = ({ investment, addInvestme
                             placeholder="0.00"
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
-                            className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
+                            className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
                         />
                     </div>
                     <button onClick={handleAddUpdate} className="w-full text-sm py-2 px-4 rounded-lg text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 transition-all transform hover:scale-105">
@@ -140,25 +140,19 @@ const CustomTooltip = ({ active, payload, label, currency }: any) => {
 };
 
 export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, totalEarnings, addInvestmentHistoryPoint, currency }) => {
-  // State to store the user's explicit selection from the dropdown.
   const [userSelectedId, setUserSelectedId] = useState<string | null>(null);
 
-  // Derives the actual ID to be displayed. This is the core of the fix.
-  // This logic is resilient to the investments list changing.
   const selectedInvestmentId = useMemo(() => {
     if (investments.length === 0) {
-      return null; // No investments, nothing to select.
+      return null;
     }
-    // Check if the user's last selection is still valid in the current list.
     const userSelectionIsValid = investments.some(inv => inv.id === userSelectedId);
     if (userSelectionIsValid) {
-      return userSelectedId; // If it is, respect the user's choice.
+      return userSelectedId;
     }
-    // If the user hasn't chosen, or their choice was deleted, default to the first item.
     return investments[0].id;
   }, [investments, userSelectedId]);
 
-  // Find the full investment object based on the safely derived ID.
   const selectedInvestment = useMemo(() => {
     if (!selectedInvestmentId) return null;
     return investments.find(inv => inv.id === selectedInvestmentId) ?? null;
@@ -209,14 +203,16 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, t
         <p className="text-gray-400 mt-1">Your financial overview.</p>
       </header>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-900 border border-white/10 p-6 rounded-xl shadow-2xl">
-              <h2 className="text-sm font-medium text-gray-400">Total Earnings</h2>
-              <p className="text-4xl font-semibold text-green-400 mt-2">{formatCurrency(totalEarnings, currency)}</p>
-          </div>
-          <div className="bg-gray-900 border border-white/10 p-6 rounded-xl shadow-2xl">
-              <h2 className="text-sm font-medium text-gray-400">Total Invested Value</h2>
-              <p className="text-4xl font-semibold text-blue-400 mt-2">{formatCurrency(totalCurrentValue, currency)}</p>
+      <div className="bg-gray-900 border border-white/10 p-4 rounded-xl shadow-2xl">
+          <div className="grid grid-cols-2 divide-x divide-gray-700">
+              <div className="px-4 text-center">
+                  <h2 className="text-base font-medium text-gray-400 truncate">Total Earnings</h2>
+                  <p className="mt-1 text-xl text-green-400 break-words">{formatCurrencyWhole(totalEarnings, currency)}</p>
+              </div>
+              <div className="px-4 text-center">
+                  <h2 className="text-base font-medium text-gray-400 truncate">Total Invested Value</h2>
+                  <p className="mt-1 text-xl text-blue-400 break-words">{formatCurrencyWhole(totalCurrentValue, currency)}</p>
+              </div>
           </div>
       </div>
 

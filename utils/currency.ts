@@ -8,7 +8,7 @@ export const supportedCurrencies = [
 
 export const formatCurrency = (value: number, currency: string) => {
     try {
-        return new Intl.NumberFormat('en-US', { 
+        return new Intl.NumberFormat('en-IN', { 
             style: 'currency', 
             currency,
             minimumFractionDigits: 2,
@@ -16,11 +16,30 @@ export const formatCurrency = (value: number, currency: string) => {
         }).format(value);
     } catch (error) {
         console.warn(`Could not format currency for code: ${currency}. Falling back to USD.`);
-        return new Intl.NumberFormat('en-US', { 
+        return new Intl.NumberFormat('en-IN', { 
             style: 'currency', 
             currency: 'USD',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
+        }).format(value);
+    }
+};
+
+export const formatCurrencyWhole = (value: number, currency: string) => {
+    try {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        }).format(value);
+    } catch (error) {
+        console.warn(`Could not format currency for code: ${currency}. Falling back to USD.`);
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
         }).format(value);
     }
 };
