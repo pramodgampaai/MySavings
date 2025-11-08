@@ -45,10 +45,10 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ setActiveScreen, onExpo
             onClick={() => setActiveScreen('currencySettings')}
         />
         <SettingsTile
-            title="Earning Sources"
-            description="Manage your list of predefined earning sources"
+            title="Income Sources"
+            description="Manage your list of predefined income sources"
             icon={<ClipboardDocumentListIcon className="w-6 h-6 text-indigo-400" />}
-            onClick={() => setActiveScreen('earningSourcesSettings')}
+            onClick={() => setActiveScreen('incomeSourcesSettings')}
         />
 
         <div className="pt-4 mt-4 border-t border-white/10 space-y-4">

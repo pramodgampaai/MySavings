@@ -1,31 +1,34 @@
 import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
-import { Earning, Investment, InvestmentHistoryPoint, Screen } from './types';
+import { Income, Investment, InvestmentHistoryPoint, Screen } from './types';
 import { Navbar } from './components/Navbar';
 import LoadingSpinner from './components/LoadingSpinner';
 
 const DashboardScreen = lazy(() => import('./components/DashboardScreen'));
-const EarningsScreen = lazy(() => import('./components/EarningsScreen'));
+const IncomeScreen = lazy(() => import('./components/IncomesScreen'));
 const InvestmentsScreen = lazy(() => import('./components/InvestmentsScreen'));
 const SettingsScreen = lazy(() => import('./components/SettingsScreen'));
-const AddEarningScreen = lazy(() => import('./components/AddEarningScreen'));
+const AddIncomeScreen = lazy(() => import('./components/AddIncomeScreen'));
 const AddInvestmentScreen = lazy(() => import('./components/AddInvestmentScreen'));
 const CurrencySettingsScreen = lazy(() => import('./components/CurrencySettingsScreen'));
-const EarningSourcesSettingsScreen = lazy(() => import('./components/EarningSourcesSettingsScreen'));
+const IncomeSourcesSettingsScreen = lazy(() => import('./components/IncomeSourcesSettingsScreen'));
 const TransactionHistoryScreen = lazy(() => import('./components/TransactionHistoryScreen'));
 const InvestmentPerformanceScreen = lazy(() => import('./components/InvestmentPerformanceScreen'));
 
 const App: React.FC = () => {
   const [activeScreen, setActiveScreen] = useState<Screen>('dashboard');
-  const [earningToEdit, setEarningToEdit] = useState<Earning | null>(null);
+  const [incomeToEdit, setIncomeToEdit] = useState<Income | null>(null);
   const [investmentToEdit, setInvestmentToEdit] = useState<Investment | null>(null);
   const [viewingInvestmentHistory, setViewingInvestmentHistory] = useState<Investment | null>(null);
   
-  const [earnings, setEarnings] = useState<Earning[]>(() => {
+  const [incomes, setIncomes] = useState<Income[]>(() => {
     try {
-      const saved = localStorage.getItem('earnings');
-      return saved ? JSON.parse(saved) : [];
+      const savedData = localStorage.getItem('income') || localStorage.getItem('incomes');
+      if (savedData) return JSON.parse(savedData);
+
+      const savedEarnings = localStorage.getItem('earnings'); // Legacy support
+      return savedEarnings ? JSON.parse(savedEarnings) : [];
     } catch (error) {
-      console.error("Failed to parse earnings from localStorage", error);
+      console.error("Failed to parse income from localStorage", error);
       return [];
     }
   });
@@ -88,20 +91,23 @@ const App: React.FC = () => {
     }
   });
 
-  const [earningSources, setEarningSources] = useState<string[]>(() => {
+  const [incomeSources, setIncomeSources] = useState<string[]>(() => {
     try {
-      const saved = localStorage.getItem('earningSources');
-      return saved ? JSON.parse(saved) : [];
+      const savedIncomeSources = localStorage.getItem('incomeSources');
+      if (savedIncomeSources) return JSON.parse(savedIncomeSources);
+
+      const savedEarningSources = localStorage.getItem('earningSources'); // Legacy support
+      return savedEarningSources ? JSON.parse(savedEarningSources) : [];
     } catch (error) {
-      console.error("Failed to parse earningSources from localStorage", error);
+      console.error("Failed to parse incomeSources from localStorage", error);
       return [];
     }
   });
 
 
   useEffect(() => {
-    localStorage.setItem('earnings', JSON.stringify(earnings));
-  }, [earnings]);
+    localStorage.setItem('income', JSON.stringify(incomes));
+  }, [incomes]);
 
   useEffect(() => {
     localStorage.setItem('investments', JSON.stringify(investments));
@@ -112,21 +118,21 @@ const App: React.FC = () => {
   }, [currency]);
   
   useEffect(() => {
-    localStorage.setItem('earningSources', JSON.stringify(earningSources));
-  }, [earningSources]);
+    localStorage.setItem('incomeSources', JSON.stringify(incomeSources));
+  }, [incomeSources]);
 
-  const addEarning = (earning: Omit<Earning, 'id'>) => {
-    const newEarning = { ...earning, id: crypto.randomUUID() };
-    setEarnings(prev => [...prev, newEarning].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  const addIncome = (income: Omit<Income, 'id'>) => {
+    const newIncome = { ...income, id: crypto.randomUUID() };
+    setIncomes(prev => [...prev, newIncome].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
   };
   
-  const updateEarning = (updatedEarning: Earning) => {
-    setEarnings(prev => prev.map(e => e.id === updatedEarning.id ? updatedEarning : e)
+  const updateIncome = (updatedIncome: Income) => {
+    setIncomes(prev => prev.map(e => e.id === updatedIncome.id ? updatedIncome : e)
                            .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
   };
 
-  const deleteEarning = (id: string) => {
-    setEarnings(prev => prev.filter(e => e.id !== id));
+  const deleteIncome = (id: string) => {
+    setIncomes(prev => prev.filter(e => e.id !== id));
   };
   
   const addInvestment = (investmentData: { name: string, initialAmount: number, startDate: string }) => {
@@ -213,26 +219,26 @@ const App: React.FC = () => {
     );
   };
 
-  const addEarningSource = (source: string) => {
-    if (source && !earningSources.find(s => s.toLowerCase() === source.toLowerCase())) {
-        setEarningSources(prev => [...prev, source].sort((a, b) => a.localeCompare(b)));
+  const addIncomeSource = (source: string) => {
+    if (source && !incomeSources.find(s => s.toLowerCase() === source.toLowerCase())) {
+        setIncomeSources(prev => [...prev, source].sort((a, b) => a.localeCompare(b)));
     }
   };
 
-  const updateEarningSource = (oldSource: string, newSource: string) => {
-    if (newSource && !earningSources.find(s => s.toLowerCase() === newSource.toLowerCase() && s.toLowerCase() !== oldSource.toLowerCase())) {
-      setEarningSources(prev => prev.map(s => s === oldSource ? newSource : s).sort((a, b) => a.localeCompare(b)));
-      setEarnings(prev => prev.map(e => e.source === oldSource ? { ...e, source: newSource } : e));
+  const updateIncomeSource = (oldSource: string, newSource: string) => {
+    if (newSource && !incomeSources.find(s => s.toLowerCase() === newSource.toLowerCase() && s.toLowerCase() !== oldSource.toLowerCase())) {
+      setIncomeSources(prev => prev.map(s => s === oldSource ? newSource : s).sort((a, b) => a.localeCompare(b)));
+      setIncomes(prev => prev.map(e => e.source === oldSource ? { ...e, source: newSource } : e));
     }
   };
 
-  const deleteEarningSource = (sourceToDelete: string) => {
-      setEarningSources(prev => prev.filter(source => source !== sourceToDelete));
+  const deleteIncomeSource = (sourceToDelete: string) => {
+      setIncomeSources(prev => prev.filter(source => source !== sourceToDelete));
   };
   
-  const totalEarnings = useMemo(() => {
-    return earnings.reduce((sum, earning) => sum + earning.amount, 0);
-  }, [earnings]);
+  const totalIncome = useMemo(() => {
+    return incomes.reduce((sum, income) => sum + income.amount, 0);
+  }, [incomes]);
 
   const handleUpdateInvestment = (investmentToUpdate: Investment) => {
     updateInvestment(investmentToUpdate);
@@ -243,10 +249,10 @@ const App: React.FC = () => {
   const handleExport = () => {
     const dataToExport = {
         version: 1,
-        earnings,
+        incomes,
         investments,
         currency,
-        earningSources,
+        incomeSources,
     };
     const dataStr = JSON.stringify(dataToExport, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -281,20 +287,23 @@ const App: React.FC = () => {
                 
                 const importedData = JSON.parse(text);
 
+                const incomesToImport = importedData.incomes || importedData.earnings;
+                const incomeSourcesToImport = importedData.incomeSources || importedData.earningSources;
+
                 if (
                     !importedData ||
-                    !Array.isArray(importedData.earnings) ||
+                    !Array.isArray(incomesToImport) ||
                     !Array.isArray(importedData.investments) ||
                     typeof importedData.currency !== 'string' ||
-                    !Array.isArray(importedData.earningSources)
+                    !Array.isArray(incomeSourcesToImport)
                 ) {
                     throw new Error('Invalid backup file format.');
                 }
 
-                setEarnings(importedData.earnings);
+                setIncomes(incomesToImport);
                 setInvestments(importedData.investments);
                 setCurrency(importedData.currency);
-                setEarningSources(importedData.earningSources);
+                setIncomeSources(incomeSourcesToImport);
 
                 alert('Data imported successfully!');
                 setActiveScreen('dashboard');
@@ -317,41 +326,41 @@ const App: React.FC = () => {
       case 'dashboard':
         return <DashboardScreen 
                     investments={investments} 
-                    totalEarnings={totalEarnings} 
+                    totalIncome={totalIncome} 
                     currency={currency} 
                     onViewPerformance={() => setActiveScreen('investmentPerformance')}
                 />;
-      case 'earnings':
-        return <EarningsScreen 
-                    earnings={earnings} 
-                    deleteEarning={deleteEarning} 
+      case 'income':
+        return <IncomeScreen 
+                    incomes={incomes} 
+                    deleteIncome={deleteIncome} 
                     currency={currency} 
-                    onAddEarning={() => {
-                        setEarningToEdit(null);
-                        setActiveScreen('addEarning');
+                    onAddIncome={() => {
+                        setIncomeToEdit(null);
+                        setActiveScreen('addIncome');
                     }}
-                    onEditEarning={(earning) => {
-                        setEarningToEdit(earning);
-                        setActiveScreen('addEarning');
+                    onEditIncome={(income) => {
+                        setIncomeToEdit(income);
+                        setActiveScreen('addIncome');
                     }}
                 />;
-      case 'addEarning':
-        return <AddEarningScreen 
-                    addEarning={(earning) => {
-                        addEarning(earning);
-                        setActiveScreen('earnings');
+      case 'addIncome':
+        return <AddIncomeScreen 
+                    addIncome={(income) => {
+                        addIncome(income);
+                        setActiveScreen('income');
                     }}
-                    updateEarning={(earning) => {
-                        updateEarning(earning);
-                        setActiveScreen('earnings');
-                        setEarningToEdit(null);
+                    updateIncome={(income) => {
+                        updateIncome(income);
+                        setActiveScreen('income');
+                        setIncomeToEdit(null);
                     }}
-                    earningToEdit={earningToEdit}
+                    incomeToEdit={incomeToEdit}
                     onCancel={() => {
-                        setActiveScreen('earnings');
-                        setEarningToEdit(null);
+                        setActiveScreen('income');
+                        setIncomeToEdit(null);
                     }}
-                    earningSources={earningSources}
+                    incomeSources={incomeSources}
                 />;
       case 'investments':
         return <InvestmentsScreen 
@@ -396,12 +405,12 @@ const App: React.FC = () => {
             onBack={() => setActiveScreen('settings')}
         />;
     
-      case 'earningSourcesSettings':
-        return <EarningSourcesSettingsScreen
-            earningSources={earningSources}
-            addEarningSource={addEarningSource}
-            updateEarningSource={updateEarningSource}
-            deleteEarningSource={deleteEarningSource}
+      case 'incomeSourcesSettings':
+        return <IncomeSourcesSettingsScreen
+            incomeSources={incomeSources}
+            addIncomeSource={addIncomeSource}
+            updateIncomeSource={updateIncomeSource}
+            deleteIncomeSource={deleteIncomeSource}
             onBack={() => setActiveScreen('settings')}
         />;
       case 'transactionHistory':
@@ -426,7 +435,7 @@ const App: React.FC = () => {
       default:
         return <DashboardScreen 
                     investments={investments} 
-                    totalEarnings={totalEarnings} 
+                    totalIncome={totalIncome} 
                     currency={currency} 
                     onViewPerformance={() => setActiveScreen('investmentPerformance')}
                 />;

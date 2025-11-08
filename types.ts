@@ -1,4 +1,4 @@
-export interface Earning {
+export interface Income {
   id: string;
   source: string;
   amount: number;
@@ -18,4 +18,4 @@ export interface Investment {
   history: InvestmentHistoryPoint[];
 }
 
-export type Screen = 'dashboard' | 'earnings' | 'addEarning' | 'investments' | 'addInvestment' | 'settings' | 'currencySettings' | 'earningSourcesSettings' | 'transactionHistory' | 'investmentPerformance';
+export type Screen = 'dashboard' | 'income' | 'addIncome' | 'investments' | 'addInvestment' | 'settings' | 'currencySettings' | 'incomeSourcesSettings' | 'transactionHistory' | 'investmentPerformance';

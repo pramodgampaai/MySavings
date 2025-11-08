@@ -16,9 +16,9 @@ const NavItem: React.FC<{
 }> = ({ screen, activeScreen, setActiveScreen, icon, label }) => {
     const isActive = activeScreen === screen || 
                      (screen === 'dashboard' && activeScreen === 'investmentPerformance') ||
-                     (screen === 'earnings' && activeScreen === 'addEarning') ||
+                     (screen === 'income' && activeScreen === 'addIncome') ||
                      (screen === 'investments' && (activeScreen === 'addInvestment' || activeScreen === 'transactionHistory')) ||
-                     (screen === 'settings' && ['currencySettings', 'earningSourcesSettings'].includes(activeScreen));
+                     (screen === 'settings' && ['currencySettings', 'incomeSourcesSettings'].includes(activeScreen));
 
     const baseClasses = 'flex flex-col items-center justify-center w-full h-full transition-all duration-300 transform';
     const activeClasses = 'text-indigo-400 scale-110';
@@ -51,11 +51,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeScreen, setActiveScreen })
             label="Dashboard" 
         />
         <NavItem 
-            screen="earnings" 
+            screen="income" 
             activeScreen={activeScreen} 
             setActiveScreen={setActiveScreen} 
             icon={<CurrencyDollarIcon className="w-6 h-6" />} 
-            label="Earnings" 
+            label="Income" 
         />
         <NavItem 
             screen="investments" 

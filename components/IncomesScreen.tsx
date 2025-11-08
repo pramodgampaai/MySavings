@@ -1,11 +1,9 @@
 import React from 'react';
-// Fix: Replaced Earning with Income to match the defined types.
 import { Income } from '../types';
 import { PencilIcon, TrashIcon, PlusIcon } from './Icons';
 import { formatCurrency } from '../utils/currency';
 
-// Fix: Renamed props and interface to use 'Income' instead of 'Earning' for consistency.
-interface IncomesScreenProps {
+interface IncomeScreenProps {
   incomes: Income[];
   deleteIncome: (id: string) => void;
   currency: string;
@@ -13,10 +11,8 @@ interface IncomesScreenProps {
   onEditIncome: (income: Income) => void;
 }
 
-// Fix: Renamed component and props to use 'Income'.
-const IncomesScreen: React.FC<IncomesScreenProps> = ({ incomes, deleteIncome, currency, onAddIncome, onEditIncome }) => {
+const IncomeScreen: React.FC<IncomeScreenProps> = ({ incomes, deleteIncome, currency, onAddIncome, onEditIncome }) => {
     const handleDelete = (id: string) => {
-        // Fix: Updated confirmation message text.
         if (window.confirm('Are you sure you want to delete this income record?')) {
             deleteIncome(id);
         }
@@ -25,20 +21,17 @@ const IncomesScreen: React.FC<IncomesScreenProps> = ({ incomes, deleteIncome, cu
     return (
         <div className="p-4 md:p-6">
             <div className="flex justify-between items-center mb-8">
-                {/* Fix: Updated heading text. */}
-                <h1 className="text-2xl font-bold text-gray-100">Your Incomes</h1>
+                <h1 className="text-2xl font-bold text-gray-100">Your Income</h1>
                 <button
                     onClick={onAddIncome}
                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-lg shadow-lg transition-all transform hover:scale-105"
                 >
                     <PlusIcon className="w-5 h-5" />
-                    {/* Fix: Updated button text. */}
                     <span>Add Income</span>
                 </button>
             </div>
 
             <div className="space-y-4">
-                {/* Fix: Using 'incomes' prop. */}
                 {incomes.map(income => (
                     <div key={income.id} className="bg-gray-900 border border-white/10 p-4 rounded-xl flex justify-between items-center">
                         <div>
@@ -58,8 +51,7 @@ const IncomesScreen: React.FC<IncomesScreenProps> = ({ incomes, deleteIncome, cu
                 ))}
                 {incomes.length === 0 && (
                     <div className="text-center text-gray-500 py-8 bg-gray-900 border border-white/10 rounded-xl">
-                        {/* Fix: Updated empty state text. */}
-                        <p>No incomes recorded yet.</p>
+                        <p>No income recorded yet.</p>
                         <p className="text-sm mt-2">Click 'Add Income' to get started.</p>
                     </div>
                 )}
@@ -68,5 +60,4 @@ const IncomesScreen: React.FC<IncomesScreenProps> = ({ incomes, deleteIncome, cu
     );
 };
 
-// Fix: Updated default export.
-export default IncomesScreen;
+export default IncomeScreen;

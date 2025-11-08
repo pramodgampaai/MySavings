@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-// Fix: Replaced Earning with Income to match the defined types.
 import { Income } from '../types';
 import { DateInput } from './DateInput';
 
-// Fix: Renamed props and interface to use 'Income' instead of 'Earning' for consistency.
 interface AddIncomeScreenProps {
   addIncome: (income: Omit<Income, 'id'>) => void;
   updateIncome: (income: Income) => void;
@@ -12,14 +10,12 @@ interface AddIncomeScreenProps {
   incomeSources: string[];
 }
 
-// Fix: Renamed component and props to use 'Income'.
 const AddIncomeScreen: React.FC<AddIncomeScreenProps> = ({ addIncome, updateIncome, incomeToEdit, onCancel, incomeSources }) => {
   const [source, setSource] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
-    // Fix: Using 'income' props.
     if (incomeToEdit) {
       setSource(incomeToEdit.source);
       setAmount(String(incomeToEdit.amount));
@@ -55,11 +51,9 @@ const AddIncomeScreen: React.FC<AddIncomeScreenProps> = ({ addIncome, updateInco
 
   return (
     <div className="p-4 md:p-6">
-      {/* Fix: Updated heading text. */}
       <h1 className="text-2xl font-bold text-gray-100 mb-8">{incomeToEdit ? 'Edit Income' : 'Add New Income'}</h1>
       <form onSubmit={handleSubmit} className="bg-gray-900 border border-white/10 p-6 rounded-xl shadow-2xl space-y-6">
         <div>
-          {/* Fix: Updated label text. */}
           <label htmlFor="source" className="block text-sm font-medium text-gray-400 mb-1">Income Source</label>
           <select
             id="source"
@@ -103,7 +97,6 @@ const AddIncomeScreen: React.FC<AddIncomeScreenProps> = ({ addIncome, updateInco
             disabled={!source.trim()}
             className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-900 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-            {/* Fix: Updated button text. */}
             {incomeToEdit ? 'Update Income' : 'Save Income'}
             </button>
         </div>
@@ -112,5 +105,4 @@ const AddIncomeScreen: React.FC<AddIncomeScreenProps> = ({ addIncome, updateInco
   );
 };
 
-// Fix: Updated default export.
 export default AddIncomeScreen;

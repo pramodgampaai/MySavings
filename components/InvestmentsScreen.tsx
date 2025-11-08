@@ -62,9 +62,34 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investments, dele
         }
     }
 
-    const getLatestValue = (investment: Investment) => {
+    const getLatestMarketValue = (investment: Investment) => {
         if (investment.history.length === 0) return 0;
-        return investment.history[investment.history.length - 1].value;
+
+        const sortedHistory = [...investment.history].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        let lastValueUpdateIndex = -1;
+        for (let i = sortedHistory.length - 1; i >= 0; i--) {
+            if (sortedHistory[i].note === "Value Update") {
+                lastValueUpdateIndex = i;
+                break;
+            }
+        }
+
+        if (lastValueUpdateIndex !== -1) {
+            const lastMarketValue = sortedHistory[lastValueUpdateIndex].value;
+            const subsequentContributions = sortedHistory
+                .slice(lastValueUpdateIndex + 1)
+                .reduce((sum, p) => sum + p.contribution, 0);
+            return lastMarketValue + subsequentContributions;
+        } else {
+            // If no explicit market value was ever logged, assume market value equals book value
+            return sortedHistory.reduce((sum, p) => sum + p.contribution, 0);
+        }
+    };
+
+    const getBookValue = (investment: Investment) => {
+        if (investment.history.length === 0) return 0;
+        return investment.history.reduce((sum, p) => sum + p.contribution, 0);
     }
 
     const getStartDate = (investment: Investment) => {
@@ -178,13 +203,26 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investments, dele
             </div>
 
             <div className="space-y-4">
-                {filteredInvestments.map(inv => (
+                {filteredInvestments.map(inv => {
+                     const currentMarketValue = getLatestMarketValue(inv);
+                     const bookValue = getBookValue(inv);
+                     const pnl = currentMarketValue - bookValue;
+                     const pnlPercent = bookValue !== 0 ? (pnl / bookValue) * 100 : 0;
+
+                    return (
                     <div key={inv.id} className="bg-gray-900 border border-white/10 p-4 rounded-xl">
                         <div className="flex justify-between items-start gap-4">
                             <div className="min-w-0 flex-1">
                                 <p className="font-semibold text-lg text-gray-200 truncate" title={inv.name}>{inv.name}</p>
                                 <p className="text-sm text-gray-400">Started on {getStartDate(inv)}</p>
-                                <p className="text-2xl font-bold text-blue-400 mt-2">{formatCurrency(getLatestValue(inv), currency)}</p>
+                                <p className="text-2xl font-bold text-blue-400 mt-2">{formatCurrency(currentMarketValue, currency)}</p>
+                                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mt-1 text-sm">
+                                    <span className="text-gray-400">Book: {formatCurrency(bookValue, currency)}</span>
+                                    <span className={`font-semibold ${pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                        P/L: {pnl >= 0 ? '+' : ''}{formatCurrency(pnl, currency)}
+                                        {bookValue !== 0 && ` (${pnlPercent.toFixed(2)}%)`}
+                                    </span>
+                                </div>
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0">
                                 <button onClick={() => handleLogMarketValueClick(inv.id)} className="p-2 text-gray-400 hover:text-indigo-400 transition-colors" title="Log Market Value">
@@ -313,7 +351,7 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investments, dele
                              </form>
                         )}
                     </div>
-                ))}
+                )})}
                  {investments.length > 0 && filteredInvestments.length === 0 && (
                     <div className="text-center text-gray-500 py-8 bg-gray-900 border border-white/10 rounded-xl">
                         <p>No investments found matching your search.</p>

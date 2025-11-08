@@ -4,25 +4,6 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { NoDataIcon, ChevronLeftIcon } from './Icons';
 import { formatCurrency } from '../utils/currency';
 
-// Custom Dot for events
-const EventDot = (props: any) => {
-    const { cx, cy, payload } = props;
-    
-    let color = 'transparent';
-    if (payload.type === 'contribution') color = '#34d399'; // green
-    if (payload.type === 'profit') color = '#facc15'; // yellow
-    if (payload.type === 'loss') color = '#f87171'; // red
-
-    if (color === 'transparent') return null;
-
-    // Render a styled dot
-    return (
-        <svg x={cx - 8} y={cy - 8} width={16} height={16} fill={color} viewBox="0 0 1024 1024">
-            <circle cx="512" cy="512" r="512" fill={color} stroke="rgba(0,0,0,0.5)" strokeWidth="50" />
-        </svg>
-    );
-};
-
 // Custom Tooltip
 const CustomTooltip = ({ active, payload, label, currency }: any) => {
     if (active && payload && payload.length) {
@@ -32,18 +13,12 @@ const CustomTooltip = ({ active, payload, label, currency }: any) => {
                 <p className="text-sm text-gray-400">{label}</p>
                 {data.marketValue !== undefined && <p className="text-base text-indigo-300">{`Market Value: ${formatCurrency(data.marketValue, currency)}`}</p>}
                 {data.bookValue !== undefined && <p className="text-base text-green-300">{`Book Value: ${formatCurrency(data.bookValue, currency)}`}</p>}
-                {data.note && data.type && (
-                    <p className={`text-sm mt-1 font-semibold ${
-                        data.type === 'contribution' ? 'text-green-400' :
-                        data.type === 'profit' ? 'text-yellow-400' :
-                        data.type === 'loss' ? 'text-red-400' : 'text-gray-400'
-                    }`}>{data.note}</p>
-                )}
             </div>
         );
     }
     return null;
 };
+
 
 interface InvestmentPerformanceScreenProps {
   investments: Investment[];
@@ -78,7 +53,10 @@ const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenProps> = 
                     .sort((a: InvestmentHistoryPoint, b: InvestmentHistoryPoint) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
                 if (relevantHistory.length > 0) {
-                    totalMarketValue += relevantHistory[relevantHistory.length - 1].value;
+                    const lastPoint = relevantHistory[relevantHistory.length - 1];
+                    // This logic for "all" is a simplified aggregation and may not be perfect,
+                    // but the single investment logic is now the priority fix.
+                    totalMarketValue += lastPoint.value; 
                     totalBookValue += relevantHistory.reduce((sum, p) => sum + p.contribution, 0);
                 }
             });
@@ -92,31 +70,61 @@ const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenProps> = 
         return aggregatedData;
     } 
     
-    // Logic for a single investment
+    // --- START: Rewritten logic for single investment ---
     const investment = investments.find(inv => inv.id === selectedInvestmentId);
-    if (!investment) return [];
-    
-    const sortedHistory = [...investment.history].sort((a: InvestmentHistoryPoint, b: InvestmentHistoryPoint) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    if (!investment || !investment.history || investment.history.length === 0) return [];
 
-    let cumulativeContribution = 0;
-    let lastKnownMarketValue = 0;
-    return sortedHistory.map(point => {
-        cumulativeContribution += point.contribution;
-        lastKnownMarketValue = point.value;
-        
-        let eventType = null;
-        if (point.note === "Funds Added" || (point.note === "Value Update & Funds Added" && point.contribution > 0)) eventType = 'contribution';
-        if (point.note === "Profit Booked") eventType = 'profit';
-        if (point.note === "Loss Booked") eventType = 'loss';
-
-        return {
-            date: new Date(`${point.date}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-            marketValue: lastKnownMarketValue,
-            bookValue: cumulativeContribution,
-            note: point.note,
-            type: eventType,
-        };
+    // Group transactions by date to handle multiple entries on the same day robustly.
+    const historyByDate = new Map<string, InvestmentHistoryPoint[]>();
+    [...investment.history].forEach(point => {
+        if (!historyByDate.has(point.date)) {
+            historyByDate.set(point.date, []);
+        }
+        historyByDate.get(point.date)!.push(point);
     });
+
+    const dataPoints: { date: string, marketValue: number, bookValue: number, note: string }[] = [];
+    let lastMarketValue = 0;
+    let cumulativeBookValue = 0;
+
+    const sortedDates = Array.from(historyByDate.keys()).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+    for (const date of sortedDates) {
+        const dayTransactions = historyByDate.get(date)!;
+        
+        // End-of-day book value is simple: previous day's book value + today's contributions.
+        const dayContributions = dayTransactions.reduce((sum, p) => sum + (p.contribution || 0), 0);
+        const EOD_BookValue = cumulativeBookValue + dayContributions;
+
+        // For market value, check if there's an explicit 'Value Update' today.
+        const valueUpdates = dayTransactions.filter(p => p.note === 'Value Update');
+        let EOD_MarketValue;
+
+        if (valueUpdates.length > 0) {
+            // If there are value updates, the last one on that day sets the End Of Day market value.
+            // This value is considered the ground truth for that day, inclusive of any same-day contributions.
+            const lastValueUpdate = valueUpdates[valueUpdates.length - 1];
+            EOD_MarketValue = lastValueUpdate.value || 0;
+        } else {
+            // No value update today, so market value is assumed to change by the sum of contributions from the previous day's value.
+            EOD_MarketValue = lastMarketValue + dayContributions;
+        }
+
+        const dayNoteString = dayTransactions.map(p => p.note).filter(Boolean).join(', ');
+
+        dataPoints.push({
+            date: new Date(`${date}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            marketValue: EOD_MarketValue,
+            bookValue: EOD_BookValue,
+            note: dayNoteString,
+        });
+        
+        // Update trackers for the next day's calculation.
+        lastMarketValue = EOD_MarketValue;
+        cumulativeBookValue = EOD_BookValue;
+    }
+    return dataPoints;
+    // --- END: Rewritten logic for single investment ---
 
   }, [investments, selectedInvestmentId]);
 
@@ -165,13 +173,14 @@ const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenProps> = 
                                     fontSize={12} 
                                     tickFormatter={(value) => formatCurrency(value as number, currency)} 
                                     domain={[
-                                        'dataMin - 100', 
+                                        'auto', 
                                         (dataMax) => {
                                             if (typeof dataMax !== 'number' || !isFinite(dataMax)) return 1000;
                                             if (dataMax === 0) return 100;
                                             return Math.ceil(dataMax * 1.05);
                                         }
                                     ]}
+                                    allowDataOverflow={true}
                                 />
                                 <Tooltip content={<CustomTooltip currency={currency} />} />
                                 <Legend wrapperStyle={{ color: '#9ca3af' }} />
@@ -183,8 +192,8 @@ const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenProps> = 
                                     strokeWidth={2} 
                                     fillOpacity={1} 
                                     fill="url(#colorValue)" 
-                                    dot={selectedInvestmentId !== '__all__' ? <EventDot /> : false}
-                                    activeDot={selectedInvestmentId !== '__all__' ? { r: 8, stroke: '#a78bfa', strokeWidth: 2 } : false}
+                                    dot={false}
+                                    activeDot={{ r: 6, stroke: '#a78bfa', strokeWidth: 2 }}
                                 />
                                 <Line
                                     type="monotone"
