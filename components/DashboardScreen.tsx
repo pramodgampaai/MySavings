@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Investment, InvestmentHistoryPoint } from '../types';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line } from 'recharts';
 import { NoDataIcon } from './Icons';
-import { formatCurrency, formatCurrencyWhole } from '../utils/currency';
+import { formatCurrency } from '../utils/currency';
 
 interface InvestmentItemProps {
     investment: Investment;
@@ -203,16 +203,14 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ investments, t
         <p className="text-gray-400 mt-1">Your financial overview.</p>
       </header>
       
-      <div className="bg-gray-900 border border-white/10 p-4 rounded-xl shadow-2xl">
-          <div className="grid grid-cols-2 divide-x divide-gray-700">
-              <div className="px-4 text-center">
-                  <h2 className="text-base font-medium text-gray-400 truncate">Total Earnings</h2>
-                  <p className="mt-1 text-xl text-green-400 break-words">{formatCurrencyWhole(totalEarnings, currency)}</p>
-              </div>
-              <div className="px-4 text-center">
-                  <h2 className="text-base font-medium text-gray-400 truncate">Total Invested Value</h2>
-                  <p className="mt-1 text-xl text-blue-400 break-words">{formatCurrencyWhole(totalCurrentValue, currency)}</p>
-              </div>
+      <div className="space-y-4">
+          <div className="bg-gray-900 border border-white/10 p-4 rounded-xl shadow-2xl">
+              <h2 className="text-base font-medium text-gray-400">Total Earnings</h2>
+              <p className="mt-1 text-2xl font-semibold text-green-400">{formatCurrency(totalEarnings, currency)}</p>
+          </div>
+          <div className="bg-gray-900 border border-white/10 p-4 rounded-xl shadow-2xl">
+              <h2 className="text-base font-medium text-gray-400">Total Invested Value</h2>
+              <p className="mt-1 text-2xl font-semibold text-blue-400">{formatCurrency(totalCurrentValue, currency)}</p>
           </div>
       </div>
 
