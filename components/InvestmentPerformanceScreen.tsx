@@ -108,7 +108,7 @@ export const InvestmentPerformanceScreen: React.FC<InvestmentPerformanceScreenPr
                     onChange={e => setSelectedInvestmentId(e.target.value || null)}
                     className="mb-4 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-indigo-500 focus:border-indigo-500 text-base truncate"
                 >
-                    <option value="">-- Select an Investment --</option>
+                    <option value="">Select an Investment</option>
                     {investments.map(inv => <option className="bg-gray-800 text-white" key={inv.id} value={inv.id}>{inv.name}</option>)}
                 </select>
                 
