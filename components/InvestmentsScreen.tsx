@@ -194,7 +194,7 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                     placeholder="Amount to add"
                                     value={fundAmount}
                                     onChange={(e) => setFundAmount(e.target.value)}
-                                    className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
+                                    className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white placeholder-gray-500"
                                 />
                                 <input
                                     type="date"
@@ -228,7 +228,7 @@ export const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ investment
                                     placeholder="Amount"
                                     value={plAmount}
                                     onChange={(e) => setPlAmount(e.target.value)}
-                                    className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white"
+                                    className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-base text-white placeholder-gray-500"
                                 />
                                 <input
                                     type="date"

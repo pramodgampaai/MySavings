@@ -15,7 +15,6 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [isDateDefault, setIsDateDefault] = useState(true);
 
-
   useEffect(() => {
     if (earningToEdit) {
       setSource(earningToEdit.source);
@@ -33,7 +32,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!source || !amount || !date || parseFloat(amount) <= 0) {
-      alert('Please fill all fields correctly.');
+      alert('Please fill all fields correctly. Amount must be positive.');
       return;
     }
 
@@ -60,12 +59,10 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             id="source"
             value={source}
             onChange={(e) => setSource(e.target.value)}
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
+            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
           >
-            {earningSources.length === 0 && <option className="bg-gray-800 text-gray-500" value="" disabled>Add a source in Settings</option>}
-            {earningSources.map((s) => (
-                <option className="bg-gray-800 text-white" key={s} value={s}>{s}</option>
-            ))}
+            {earningSources.map(s => <option key={s} value={s}>{s}</option>)}
+            {earningSources.length === 0 && <option value="">No sources defined</option>}
           </select>
         </div>
         <div>
@@ -76,7 +73,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0.00"
-            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
+            className="mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-white"
           />
         </div>
         <div>
@@ -86,10 +83,10 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             id="date"
             value={date}
             onChange={(e) => {
-              setDate(e.target.value);
-              setIsDateDefault(false);
+                setDate(e.target.value);
+                setIsDateDefault(false);
             }}
-            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
+            className={`mt-1 block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-base text-left ${isDateDefault ? 'text-gray-400' : 'text-white'}`}
           />
         </div>
         <div className="flex gap-4">
@@ -102,7 +99,7 @@ export const AddEarningScreen: React.FC<AddEarningScreenProps> = ({ addEarning, 
             </button>
             <button
             type="submit"
-            disabled={earningSources.length === 0}
+            disabled={!source.trim()}
             className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 focus:ring-offset-gray-900 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
             {earningToEdit ? 'Update Earning' : 'Save Earning'}
